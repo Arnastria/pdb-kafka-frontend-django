@@ -8,6 +8,7 @@ Prerequisite :
 - Redis. [Install it from here](https://redis.io/download) or any other installation source like ```apt-get``` and ```brew```. Make sure redis is started at port **6379**
 
 ## How to Run
+
 ### Install requirements.txt :
 - It is better to use python virtual environment 
 ```
@@ -19,6 +20,7 @@ pip install -r requirements.txt
 python manage.py migrate
 ```
 ### Runserver :
+* **Warning please start the [kafka-backend](https://github.com/Arnastria/Kafka-big-data-project) first before this !!!**
 * make sure you are at directory with ```manage.py```
 ```
 python manage.py runserver
