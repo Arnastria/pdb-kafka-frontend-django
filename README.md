@@ -25,3 +25,24 @@ python manage.py migrate
 ```
 python manage.py runserver
 ```
+
+### Tugas :
+* Benerin initable.sql di repo kafka. Supaya bentuk tabelnya sesuai sama dataset
+* Bikin coded python queryinserter yang:
+```
+- bisa baca CSV / apapun dataset yang kita pake kemaren
+- setengah dimasukin, setengah dibiarin
+- baca nya berkala, 5 baris-baris setiap 5 detik, terus tembak terus kayak yang dicontoh.
+```
+* Django :
+```
+- Bikin django models untuk nyimpen data ()
+- Bikin endpoint (websocket) lagi kalau disuruh > 1 topik
+```
+
+* React :
+```
+- Bikin react project
+- somehow konek ke websocket
+- Bikin halaman dashboard yang isinya 1 tabel 2 grafik 
+```

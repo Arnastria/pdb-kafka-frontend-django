@@ -61,6 +61,7 @@ def index(request):
         thread = Thread(target=rating_thread)
         thread.daemon = True
         thread.start()
+        ratingThread = True
 
     global queueThread
     if queueThread is None:
