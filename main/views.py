@@ -18,6 +18,7 @@ from main.models import AverageAge, AverageRating, ProductRating
 
 ratingThread = None
 queueThread = None
+salesThread = None
 obj_queue = queue.Queue()
 
 def put_queue_thread(obj):
@@ -105,10 +106,31 @@ def average_age_thread(msg):
     except Exception as e :
         print(str(e))
 
+def sales_thread():
+    print("starting sales_thread")
+    consumer = KafkaConsumer(
+        'sales.most-sales-product',
+        bootstrap_servers=[settings.KAFKA_PRODUCER_IP+':9093'],
+        group_id='my-group',
+        value_deserializer=lambda x: loads(x.decode('utf-8')))
+    consumer.poll()
+    
+
+    for message in consumer:
+        try:
+            msg = message.value
+            channel_layer = get_channel_layer()
+            print("[Getting data from kafka..]")
+            print(msg)
+            print()
+            async_to_sync(channel_layer.group_send)("events", {"type": "sales.message","message": msg})
+
+        except Exception as e:
+            print(str(e))
+
 def index(request):
 
     global obj_queue
-    # bus_code = request.GET['bus_code']
 
     global ratingThread
     if ratingThread is None:
@@ -120,6 +142,12 @@ def index(request):
     global queueThread
     if queueThread is None:
         thread = Thread(target=save_queue_thread)
+        thread.daemon = True
+        thread.start()
+    
+    global salesThread
+    if salesThread is None:
+        thread = Thread(target=sales_thread)
         thread.daemon = True
         thread.start()
 

@@ -46,3 +46,12 @@ class VisualizationCustomer(WebsocketConsumer):
             'type':'average_age',
             'message': message
         }))
+    
+    def sales_message(self, text_data):
+        text_data_json = text_data
+        message = text_data_json['message']
+
+        self.send(text_data=json.dumps({
+            'type':'sales',
+            'message': message
+        }))
