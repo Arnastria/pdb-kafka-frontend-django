@@ -28,3 +28,21 @@ class VisualizationCustomer(WebsocketConsumer):
             'type':'rating',
             'message': message
         }))
+    
+    def average_rating_message(self, text_data):
+        text_data_json = text_data
+        message = text_data_json['message']
+
+        self.send(text_data=json.dumps({
+            'type':'average_rating',
+            'message': message
+        }))
+    
+    def average_age_message(self, text_data):
+        text_data_json = text_data
+        message = text_data_json['message']
+
+        self.send(text_data=json.dumps({
+            'type':'average_age',
+            'message': message
+        }))

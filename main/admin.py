@@ -13,6 +13,6 @@ class ProductRatingAdmin(admin.ModelAdmin):
 class AverageAgeAdmin(admin.ModelAdmin):
     readonly_fields = ['avg_id']
 
-@admin.register(ProductRating)
+@admin.register(AverageRating)
 class AverageRatingAdmin(admin.ModelAdmin):
     readonly_fields = ['avg_id']
