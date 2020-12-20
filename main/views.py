@@ -37,7 +37,7 @@ def rating_thread():
         value_deserializer=lambda x: loads(x.decode('utf-8')))
     consumer.poll()
     #go to end of the stream
-    consumer.seek_to_end()
+    #consumer.seek_to_end()
     for message in consumer:
         try:
             msg = message.value['payload']['after']
@@ -52,8 +52,6 @@ def rating_thread():
 def index(request):
 
     global obj_queue
-
-    global bus_code
     # bus_code = request.GET['bus_code']
 
     global ratingThread
