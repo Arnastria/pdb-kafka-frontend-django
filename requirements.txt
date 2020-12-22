@@ -4,3 +4,4 @@ kafka-python
 websocket-client
 channels
 channels_redis
+django-cors-headers
