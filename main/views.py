@@ -70,6 +70,7 @@ def average_rating_thread(msg):
         try:
             current_avg_rating = AverageRating.objects.get(avg_id=1)
             current_avg_rating.average_rating = (current_avg_rating.average_rating + average_rating)/2
+            current_avg_rating.timestamp = timestamp
         except AverageRating.DoesNotExist:
             current_avg_rating = AverageRating.create(1,average_rating,timestamp)
 
@@ -93,6 +94,7 @@ def average_age_thread(msg):
         try:
             current_avg_age = AverageAge.objects.get(avg_id=1)
             current_avg_age.average_age = (current_avg_age.average_age + average_age)/2
+            current_avg_age.timestamp = timestamp
         except AverageAge.DoesNotExist:
             current_avg_age = AverageAge.create(1,average_age,timestamp)
 
