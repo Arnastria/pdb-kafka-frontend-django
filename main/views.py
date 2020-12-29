@@ -12,7 +12,7 @@ import queue
 import time
 import datetime
 
-from main.models import AverageAge, AverageRating, ProductRating
+from main.models import AverageAge, AverageRating, ProductRating, CounterRow
 
 # Create your views here.
 
@@ -40,12 +40,18 @@ def rating_thread():
         group_id='my-group',
         value_deserializer=lambda x: loads(x.decode('utf-8')))
     consumer.poll()
-
+    
     #go to end of the stream
-    #consumer.seek_to_end()
+    # consumer.seek_to_end()
 
     for message in consumer:
         try:
+            timestamp = datetime.datetime.now()
+            try:
+                counter = CounterRow.objects.get(cnt_id=1)
+            except CounterRow.DoesNotExist:
+                counter = CounterRow.create(1,1,timestamp)
+
             msg = message.value['payload']
             channel_layer = get_channel_layer()
             print("[Getting data from kafka..]")
@@ -53,14 +59,18 @@ def rating_thread():
             print()
             async_to_sync(channel_layer.group_send)("events", {"type": "rating.message","message": msg})
 
-            thread_avg_rating = Thread(target=average_rating_thread, args=(msg,))
-            thread_avg_age = Thread(target=average_age_thread, args=(msg,))
+            thread_avg_rating = Thread(target=average_rating_thread, args=(msg,counter.cnt,))
+            thread_avg_age = Thread(target=average_age_thread, args=(msg,counter.cnt,))
             thread_avg_rating.start()
             thread_avg_age.start()
+
+            counter.cnt = counter.cnt +1
+            thread_cnt = Thread(target=put_queue_thread,args=(counter,))
+            thread_cnt.start()
         except Exception as e:
             print(str(e))
 
-def average_rating_thread(msg):
+def average_rating_thread(msg,cnt):
     print("starting average_rating_thread")
     try:
         msg = msg['after']
@@ -69,7 +79,7 @@ def average_rating_thread(msg):
 
         try:
             current_avg_rating = AverageRating.objects.get(avg_id=1)
-            current_avg_rating.average_rating = (current_avg_rating.average_rating + average_rating)/2
+            current_avg_rating.average_rating = (current_avg_rating.average_rating*cnt + average_rating)/(cnt+1)
             current_avg_rating.timestamp = timestamp
         except AverageRating.DoesNotExist:
             current_avg_rating = AverageRating.create(1,average_rating,timestamp)
@@ -79,12 +89,13 @@ def average_rating_thread(msg):
         channel_layer = get_channel_layer()
         async_to_sync(channel_layer.group_send)("events", {"type": "average_rating.message","message": data_dict})
 
+
         thread = Thread(target=put_queue_thread,args=(current_avg_rating,))
         thread.start()
     except Exception as e :
         print(str(e))
 
-def average_age_thread(msg):
+def average_age_thread(msg,cnt):
     print("starting average_age_thread")
     try:
         msg = msg['after']
@@ -93,7 +104,7 @@ def average_age_thread(msg):
 
         try:
             current_avg_age = AverageAge.objects.get(avg_id=1)
-            current_avg_age.average_age = (current_avg_age.average_age + average_age)/2
+            current_avg_age.average_age = (current_avg_age.average_age*cnt + average_age)/(cnt+1)
             current_avg_age.timestamp = timestamp
         except AverageAge.DoesNotExist:
             current_avg_age = AverageAge.create(1,average_age,timestamp)

@@ -3,6 +3,7 @@ from django.contrib import admin
 from .models import ProductRating
 from .models import AverageAge
 from .models import AverageRating
+from .models import CounterRow
 # Register your models here.
 
 @admin.register(ProductRating)
@@ -16,3 +17,7 @@ class AverageAgeAdmin(admin.ModelAdmin):
 @admin.register(AverageRating)
 class AverageRatingAdmin(admin.ModelAdmin):
     readonly_fields = ['avg_id']
+
+@admin.register(CounterRow)
+class CounterRowAdmin(admin.ModelAdmin):
+    readonly_fields = ['cnt_id']

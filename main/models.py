@@ -54,3 +54,13 @@ class AverageRating(PdbModels):
     def create(cls, avg_id, average_rating, timestamp):
         avg_rating = cls(avg_id=avg_id, average_rating=average_rating, timestamp=timestamp)
         return avg_rating
+
+class CounterRow(PdbModels):
+    cnt_id = models.CharField('cntr_id',max_length=120,primary_key=True)
+    cnt = models.IntegerField('counter')
+    timestamp = models.DateTimeField()
+
+    @classmethod
+    def create(cls, cnt_id, cnt, timestamp):
+        counter_row = cls(cnt_id=cnt_id, cnt=cnt, timestamp=timestamp)
+        return counter_row
